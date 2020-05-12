@@ -1,0 +1,31 @@
+version: "3.2"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.aarm64
+    image: Y29udGFpbmVy.home.anusec.com/vscode:latest
+    env_file: ./.env
+    volumes:
+      - /var/data/docker/vscode:/config
+      - /run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik_public
+    deploy:
+      mode: replicated
+      replicas: 1       
+      placement:
+        constraints:
+          - node.platform.arch == aarch64
+      labels:
+        - traefik.docker.network=traefik_public
+        - traefik.enable=true
+        - traefik.http.routers.vscode.entrypoints=websecure
+        - traefik.http.routers.vscode.middlewares=secured@docker
+        - traefik.http.routers.vscode.rule=Host(`vscode.home.anusec.com`)
+        - traefik.http.services.vscode.loadbalancer.server.port=8443
+
+networks:
+  traefik_public:
+    external: true

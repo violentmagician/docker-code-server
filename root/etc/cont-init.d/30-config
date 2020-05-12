@@ -13,5 +13,6 @@ if [ -n "${SUDO_PASSWORD}" ]; then
 fi
 
 # permissions
-chown -R abc:abc \
-	/config
+#chown -R abc:abc \
+#	/config/data
+	
